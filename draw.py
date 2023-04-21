@@ -97,14 +97,23 @@ def create_labyrinth(n=20, m=20):
 
 def draw_labyrinth(matrix, start, finish, width_line=20, width_walls=5, color_way=(255, 255, 255),
                    color_wall=(0, 0, 0),
-                   border=5, color_start=(0, 255, 0), color_finish=(255, 0, 0)):
+                   border=5, color_start=(0, 0, 0), color_finish=(0, 0, 0)):
     """Рисование лабиринта"""
+    # w_maze = len(matrix[0])
+    # h_maze = len(matrix)
+    # if w_maze >= h_maze:
+    #     width = width_window
+    #     height = int(float(width * (h_maze/w_maze)))
+    # else:
+    #     height = width_window
+    #     width = int(float(height * (w_maze / h_maze)))
     width = (len(matrix) // 2 + 1) * width_line + (len(matrix) // 2) * width_walls + border * 2
     height = (len(matrix[0]) // 2 + 1) * width_line + (len(matrix[0]) // 2) * width_walls + border * 2
+    surf2 = pg.Surface((width, height))
     for i in range(width):
         for j in range(height):
             if i < border or width - i <= border or j < border or height - j <= border:  # отображение границ лабиринта
-                pg.draw.line(window, color_wall, [i, j], [i, j], 1)
+                pg.draw.line(surf2, color_wall, [i, j], [i, j], 1)
             else:
                 if (i - border) % (width_line + width_walls) <= width_line:
                     x = (i - border) // (width_line + width_walls) * 2
@@ -115,15 +124,17 @@ def draw_labyrinth(matrix, start, finish, width_line=20, width_walls=5, color_wa
                 else:
                     y = (j - border) // (width_line + width_walls) * 2 + 1
                 if matrix[x][y]:
-                    pg.draw.line(window, color_way, [i, j], [i, j], 1)
+                    pg.draw.line(surf2, color_way, [i, j], [i, j], 1)
                 else:
-                    pg.draw.line(window, color_wall, [i, j], [i, j], 1)
-    pg.draw.rect(window, color_start, (
+                    pg.draw.line(surf2, color_wall, [i, j], [i, j], 1)
+    place = surf2.get_rect(center=(width_window / 2, height_window / 2))
+    pg.draw.rect(surf2, color_start, (  # точка начала
         border + start[0] * (width_line + width_walls), border + start[1] * (width_line + width_walls), width_line,
         width_line))
-    pg.draw.rect(window, color_finish, (
+    pg.draw.rect(surf2, color_finish, (  # точка конца
         border + finish[0] * (width_line + width_walls), border + finish[1] * (width_line + width_walls), width_line,
         width_line))
+    screen.blit(surf2, place)
 
 
 #main
@@ -180,23 +191,28 @@ while start == False:
 
 
 border = 5
-width_line = 40
-width_walls = 5
+width = 19 #размер лабиринта, до 50
+height = 6
+msz = max(width, height)
+width_walls = width_window//(msz * 6)
+width_line = width_walls * 5
+# if width_walls == 0:
+#     width_walls = 1
+#     kl_walls = msz + 1
+#     width_line = (width_window - kl_walls) // width
+#     if width_line == 0:
+#         width_line = 1
+border = width_walls
 color_way = (255, 255, 255)
 color_wall = (0, 0, 0)
-color_player = (0, 0, 255)
-color_start = (0, 255, 0)
-color_finish = (255, 0, 0)
+color_start = colors.BLACK
+color_finish = colors.BLACK
 trace = False
-color_trace = color_player
-width = 20 #размер лабиринта
-height = 20
 # width_window = ((width * 2 - 1) // 2 + 1) * width_line + ((width * 2 - 1) // 2) * width_walls + border * 2
 # height_window = ((height * 2 - 1) // 2 + 1) * width_line + ((height * 2 - 1) // 2) * width_walls + border * 2
 if typ:
     t = 0
     matrix_base = []
-
     window = pg.display.set_mode((width_window, height_window))  # создали окно
     pg.display.set_caption("Лабиринт")
     #pygame.display.set_icon(pygame.image.load("favicon.ico"))
@@ -216,5 +232,8 @@ if typ:
                 pg.quit()
                 sys.exit()
         clock.tick(FPS)
+
+#else:
+
 
 
