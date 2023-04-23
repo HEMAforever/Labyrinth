@@ -1,0 +1,44 @@
+## Код функции:
+def convert(matrix, height, width):  # берём матрицу переходов (со стенами), высоту, ширину (по ним восстановим р-р стен)
+    global kl
+    name = "maze_"
+    name += str(kl)
+    kl += 1
+    name += ".ahah"
+    file = open(name, 'wb')
+    data = struct.pack('<B', 97)
+    data += struct.pack('<B', 104)
+    data += struct.pack('<B', 97)
+    data += struct.pack('<B', 104)
+    file.write(data)
+    data = struct.pack('<B', height)
+    file.write(data)
+    data = struct.pack('<B', width)
+    file.write(data)
+    s = ""
+    for i in range(height * 2 - 1):
+        for j in range(width * 2 - 1):
+            if matrix[i][j]:
+                s += "1"
+            else:
+                s += "0"
+            if len(s) == 8:
+                num = int(s, 2)
+                data = struct.pack('<B', num)
+                file.write(data)
+                s = ""
+    if s != "":
+        while len(s) < 8:
+            s += "0"
+        num = int(s, 2)
+        data = struct.pack('<B', num)
+        file.write(data)
+    file.close()
+    
+## Принцип работы:
+Данная функция сохраняет размер лабиринта, а также матрицу переходов (со стенами) в виде символов unsigned char в бинарном виде
+1) Сохраняет расширение (.ahah)
+2) Первое из сохранённых чисел - высота лабиринта, второе - ширина
+3) Поскольку матрица переходов состоит из True(1) и False(0), 8 цифр можно сохранить как 1 символ unsigned char. Поэтому программа проходит по матрице, набирает 8 цифр и записывает 
+их как строку. После чего число, записанное в строке в двоичной системе счисления я перевожу в десятичную функцией int(s, 2) и сохраняю в файл в виде символа char.
+4) Если количество символов в матрице не кратно восьми, то есть остаётся неполная строка, то я дополняю её незначащими нулями, которые не учитываю при разворачивании.
