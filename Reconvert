@@ -1,0 +1,44 @@
+## Код функции
+file = open(name, 'rb')
+    sign = file.read(4)
+    h = file.read(1)
+    height = struct.unpack('<B', h)[0]
+    w = file.read(1)
+    width = struct.unpack('<B', w)[0]
+    height2 = height * 2 - 1
+    width2 = width * 2 - 1
+    matrix = []
+    for i in range(height2):
+        matrix.append([])
+        for j in range(width2):
+            matrix[i].append(0)
+    sz = height2 * width2
+    till = sz // 8
+    if sz % 8 != 0:
+        till += 1
+    i = 0
+    j = 0
+    for x in range(till):
+        n = file.read(1)
+        num = struct.unpack('<B', n)[0]
+        for y in range(7, -1, -1):
+            a = num // (2 ** y)
+            num = num % (2 ** y)
+            matrix[i][j] = a
+            j += 1
+            if j == width2:
+                j = 0
+                i += 1
+            if i == height * 2 - 1:
+                break
+    file.close()
+    msz = max(width, height)
+    width_walls = width_window // (msz * 6)
+    width_line = width_walls * 5
+    border = width_walls
+    draw_labyrinth(matrix, (0, 0), (height - 1, width - 1), width_line, width_walls, colors.WHITE,
+                   colors.BLACK,
+                   border)
+                   
+## Описание функции
+На ввод подаётся имя файла, который необходимо вернуть к исходному виду лабиринта. Разворачивает файл в соответсвии с тем, как он сворачивался (процесс описан в файле convert)
