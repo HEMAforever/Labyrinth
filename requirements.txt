@@ -1,2 +1,7 @@
-Библиотеки:
-pygame
+import sys
+import colors
+import pygame as pg
+import colors (отдельный файл colors.py)
+import random
+import struct
+import time
